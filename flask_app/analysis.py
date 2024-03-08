@@ -9,18 +9,32 @@ from scipy.spatial.distance import cosine
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer import DocumentAnalysisClient
 
-API_KEY = os.environ.get('ALEPH_KEY')
+#API_KEY = os.environ.get('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoyNDE4MCwidG9rZW5faWQiOjUxMzN9.WltAoV7LimDK6Ndlb7H2KSdKVwdVrCUAap_y0-uPfVc')
+API_KEY = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoyNDE4MCwidG9rZW5faWQiOjUxMzN9.WltAoV7LimDK6Ndlb7H2KSdKVwdVrCUAap_y0-uPfVc'
 model = "luminous-base"
 
 
-endpoint = os.environ.get('AZURE_FORM_ENDPOINT')
-key = os.environ.get('AZURE_FORM_KEY')
+
+#endpoint = os.environ.get('https://cc-formrecognizer.cognitiveservices.azure.com')
+#key = os.environ.get('2757a92e4f884da3b5e0c5b0e3d10131')
+
+endpoint = 'https://cc-formrecognizer.cognitiveservices.azure.com'
+key = '2757a92e4f884da3b5e0c5b0e3d10131'
+
+if isinstance(key, str):
+    print("The key is a string.")
+else:
+    print("The key is not a string.")
+
+#if key is not None:
+#   key = str(key)
+
 
 def azure_form_recognition(image_input):
     document = image_input
 
     document_analysis_client = DocumentAnalysisClient(
-        endpoint=endpoint, credential=AzureKeyCredential(key)
+        endpoint=endpoint, credential=AzureKeyCredential(key)  #AzureKeyCredential(key)
     )
 
     poller = document_analysis_client.begin_analyze_document("prebuilt-receipt", document)

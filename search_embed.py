@@ -5,7 +5,8 @@ import pandas as pd
 import os 
 
 model = "luminous-base"
-API_KEY = os.environ.get('ALEPH_KEY')
+#API_KEY = os.environ.get('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoyNDE4MCwidG9rZW5faWQiOjUxMzN9.WltAoV7LimDK6Ndlb7H2KSdKVwdVrCUAap_y0-uPfVc')
+API_KEY = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoyNDE4MCwidG9rZW5faWQiOjUxMzN9.WltAoV7LimDK6Ndlb7H2KSdKVwdVrCUAap_y0-uPfVc'
 
 # Create Aleph Endpoint embeddings
 def create_semantic_embeddings(texts):
