@@ -30,7 +30,7 @@ def create_semantic_embeddings(texts):
         result = response.json()
         embeddings[txt] = result["embedding"]
 
-    file = './semantic_embedding_dict_en.json'
+    file = './semantic_embedding_dict_en.json'     
 
     with open(file, 'w') as f: 
         json.dump(embeddings, f)
@@ -39,7 +39,7 @@ def create_semantic_embeddings(texts):
 # google translate and the leading text here and analysis.py line 93
 # run it once via 'pipenv run python search_embed.py' 
 # after changing the mapping file
-grocery_mapping = pd.read_excel("grocery_mapping_en.xlsx", engine="openpyxl")
+grocery_mapping = pd.read_excel("test2.xlsx", engine="openpyxl")
 texts = ["The grocery receipt item is: " + str(product) for product in grocery_mapping["product"]]
 create_semantic_embeddings(texts)
 

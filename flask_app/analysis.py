@@ -117,9 +117,31 @@ def match_and_merge_combined(df1: pd.DataFrame, df2: pd.DataFrame, col1: str, co
         scores.append(score)
 
     # detect unmatched entries to be positioned at the end of the dataframe
+    #missing_indices = [i for i in range(len(df2)) if i not in matched_indices]
+    #ordered_indices.extend(missing_indices)
+    #ordered_df2 = df2.iloc[ordered_indices].reset_index()
+    
+    
+    # Detect unmatched entries to be positioned at the end of the dataframe
     missing_indices = [i for i in range(len(df2)) if i not in matched_indices]
-    ordered_indices.extend(missing_indices)
-    ordered_df2 = df2.iloc[ordered_indices].reset_index()
+
+    # Ensure all indices are within bounds
+    valid_indices = [idx for idx in ordered_indices + missing_indices if idx < len(df2) and idx >= 0]
+
+    # Check if there are any valid indices
+    if valid_indices:
+        ordered_df2 = df2.iloc[valid_indices].reset_index()
+    else:
+        # Handle the case when there are no valid indices
+        print("No valid indices found.")
+
+    
+    
+    
+    
+    
+    
+    
 
     # merge rows of dataframes
     merged_df = pd.concat([df1, ordered_df2], axis=1)
@@ -129,7 +151,7 @@ def match_and_merge_combined(df1: pd.DataFrame, df2: pd.DataFrame, col1: str, co
     merged_df["similarity_ratio"] = pd.Series(scores) / 100
    
     # Detect if item is measured in kg and correct values
-    merged_df["footprint"]= (merged_df["quantity"]*merged_df["typical_footprint"]).round(0)
+    merged_df["footprint"]= (merged_df["quantity"]*merged_df["typical_footprint"])   #.round(0)
     merged_df.loc[~(merged_df["quantity"] % 1 == 0),"footprint"] = merged_df["quantity"]*10*merged_df["footprint_per_100g"]
     merged_df.loc[~(merged_df["quantity"] % 1 == 0),"typical_weight"] = merged_df["quantity"]*1000
     merged_df.loc[~(merged_df["quantity"] % 1 == 0),"quantity"] = 1
@@ -138,7 +160,7 @@ def match_and_merge_combined(df1: pd.DataFrame, df2: pd.DataFrame, col1: str, co
     merged_df = merged_df.drop(["index"], axis=1).dropna(subset=["description"])
 
     # Type conversion to integers
-    merged_df["footprint"]=merged_df["footprint"].astype(int)
+    #merged_df["footprint"]=merged_df["footprint"].astype(int)
     
     # Set standardized product descriptions
     merged_df.loc[(~pd.isna(merged_df["value_from"])),"product"] = merged_df["value_from"]    
@@ -148,11 +170,11 @@ def match_and_merge_combined(df1: pd.DataFrame, df2: pd.DataFrame, col1: str, co
 # Call this function from the main route for the english analysis
 def analyze_receipt_en(image):
     # Load mapping table for fuzzy string mapping
-    grocery_mapping = pd.read_excel(os.path.join(os.path.dirname(app.instance_path), "grocery_mapping_en.xlsx"), engine="openpyxl")
+    grocery_mapping = pd.read_excel(os.path.join(os.path.dirname(app.instance_path), "test2.xlsx"), engine="openpyxl")   ##excel
     ocr_result, store = azure_form_recognition(image)
 
     # Load semantic embedding dict for semantic mapping        
-    with open('./semantic_embedding_dict_en.json', 'r') as f:
+    with open('./semantic_embedding_dict_en.json', 'r') as f:   
         embeddings = json.load(f)
     # You can change the cutoff params here for higher / lower accuracy 
     results = match_and_merge_combined(ocr_result,grocery_mapping,"description","product",embeddings,88,55,"en")
@@ -166,7 +188,7 @@ def analyze_receipt(image):
     ocr_result, store = azure_form_recognition(image)
 
     # Load semantic embedding dict for semantic mapping        
-    with open('./semantic_embedding_dict.json', 'r') as f:
+    with open('./embedding_data.json', 'r') as f:  
         embeddings = json.load(f)
     # You can change the cutoff params here for higher / lower accuracy 
     results = match_and_merge_combined(ocr_result,grocery_mapping,"description","product",embeddings,88,55,"de")
